@@ -1,70 +1,53 @@
-# Getting Started with Create React App
+# Entrega Coleções
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+O objetivo desse projeto é criar uma aplicação na qual disponibilizamos duas listagens de personagens para o usuário. A primeira lista será do Rick and Morty e a segunda de Pokemons. Cada lista deve-se apresentar em sua respectiva página, com um campo de busca e botões para a paginação.
 
-## Available Scripts
+Além da listagem, o usuário poderá adicionar um determinado personagem a sua lista de personagens favoritos, que por sua vez também terá sua própria página. Uma para os pokémons favoritos e outra para os personagens da série Rick and Morty.
 
-In the project directory, you can run:
+Uma vez com o personagem favoritado, o usuário poderá remover o mesmo da lista de favoritos.
 
-### `yarn start`
+Exemplo: Se eu clico em um personagem da listagem de pokémons, ele deverá ser adicionado na lista de favoritos de pokémons ou se eu clicar em um personagem do Rick and Morty, deverá ser adicionado em outra lista de favoritos dos personagens do Rick and Morty.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+obs: Vamos trabalhar apenas com os 150 primeiros Pokemons!
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+### Detalhes API Rick And Morty
 
-### `yarn test`
+Use a url, mudando apenas o número do parâmetro page, de acordo com a página desejada: (Links to an external site.)https://rickandmortyapi.com/api/character/?page=1 (Links to an external site.)
+Essa API é bem completa e já vem tudo que precisa 🥳
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Detalhes API Pokemon:
 
-### `yarn build`
+Para a paginação na API do pokemon, ela deve ser passado na URL como o offset:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Ex.: https://pokeapi.co/api/v2/pokemon?offset=20&limit=20
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+O limit serve para informar quando o máximo de elemento que a api deve retornar.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Já o offset serve para informar a API a partir de qual elemento ela deve retornar. No exemplo acima, a API retornaria a partir do elemento 20 . Ou seja, caso queria ir para a próxima página, o offset será 40, depois 60... e assim por diante. Caso não queria fazer paginação, simplesmente use uma url sem offset e com o limit de 150:
 
-### `yarn eject`
+Exemplo: https://pokeapi.co/api/v2/pokemon?limit=150
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+O endpoint de listagem de Pokemons não retorna a url da imagem do Pokemon, portanto use essa de base, é só colocar no final, o ID do pokemon: https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{ID}.png
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Exemplo https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/22.png
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Porém, a listagem de Pokemons também não retorna o ID diretamente, a única coisa que a listagem retorna para cada elemento é:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```javascript
+{
+  "name": "bulbasaur",
+  "url": "<https://pokeapi.co/api/v2/pokemon/1/>"
+},
+```
 
-## Learn More
+Você pode utilizar a string do atributo url e trata-la para pegar o ID. Uma boa ideia seria quebrar a string e array, separando por /, e pegar o ultimo elemento do array.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+Exemplo:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```javascript
+const brokenUrl = url.split("/");
+const id = brokenUrl[brokenUrl.length - 1]
+)
+```
 
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `yarn build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/1.png
