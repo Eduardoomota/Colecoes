@@ -1,5 +1,12 @@
 import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToFavoritesThunk,
+  removeToFavoritesThunk,
+} from "../../store/thunks/favoritesThunk";
+import { isFavorite } from "../../helpers";
 import axios from "axios";
+
 import { IconButton } from "@material-ui/core";
 
 // STYLES
@@ -12,10 +19,12 @@ import {
   Navigation,
 } from "../../Global";
 
-const RickAndMorty = ({ setAddFavorite, addFavorite }) => {
+const RickAndMorty = () => {
   const [page, setPage] = useState(1);
   const [pagesCount, setPagesCount] = useState(1);
   const [data, setData] = useState([]);
+  const dispatch = useDispatch();
+  const favorites = useSelector(({ favorites }) => favorites);
 
   useEffect(() => {
     axios
@@ -31,26 +40,13 @@ const RickAndMorty = ({ setAddFavorite, addFavorite }) => {
   };
 
   const setFavorite = (card) => () => {
-    let verify = isFavorite(card);
+    let verify = isFavorite(card, favorites);
 
     if (verify === false) {
-      setAddFavorite([...addFavorite, card]);
+      dispatch(addToFavoritesThunk(card));
       return;
     }
-
-    setAddFavorite(addFavorite.filter((item) => item.name !== card.name));
-  };
-
-  const isFavorite = (card) => {
-    const favoriteFilter = addFavorite.filter(
-      (item) => item.name === card.name
-    );
-
-    if (favoriteFilter.length === 0) {
-      return false;
-    }
-
-    return true;
+    dispatch(removeToFavoritesThunk(card));
   };
 
   return (
@@ -61,7 +57,7 @@ const RickAndMorty = ({ setAddFavorite, addFavorite }) => {
           <CardItemContent>
             {char.name}
             <IconButton onClick={setFavorite(char)}>
-              <IconFavorite active={isFavorite(char).toString()} />
+              <IconFavorite active={isFavorite(char, favorites).toString()} />
             </IconButton>
           </CardItemContent>
         </CardItem>

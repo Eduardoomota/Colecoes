@@ -1,4 +1,9 @@
 import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  addToFavoritesThunk,
+  removeToFavoritesThunk,
+} from "../../store/thunks/favoritesThunk";
 import axios from "axios";
 
 import { IconButton } from "@material-ui/core";
@@ -13,7 +18,9 @@ import {
   Navigation,
 } from "../../Global";
 
-const Pokemon = ({ setAddFavorite, addFavorite }) => {
+import { isFavorite } from "../../helpers";
+
+const Pokemon = () => {
   const [countPages, setCountPages] = useState(0);
   const [data, setData] = useState([]);
   const [pagination, setPagination] = useState({
@@ -24,6 +31,8 @@ const Pokemon = ({ setAddFavorite, addFavorite }) => {
   const [baseURL, setBaseURL] = useState(
     "https://pokeapi.co/api/v2/pokemon?offset=0&limit=20"
   );
+  const dispatch = useDispatch();
+  const favorites = useSelector(({ favorites }) => favorites);
 
   useEffect(() => {
     axios.get(baseURL).then((res) => {
@@ -53,26 +62,13 @@ const Pokemon = ({ setAddFavorite, addFavorite }) => {
   };
 
   const setFavorite = (card) => {
-    let verify = isFavorite(card);
+    let verify = isFavorite(card, favorites);
 
     if (verify === false) {
-      setAddFavorite([...addFavorite, card]);
+      dispatch(addToFavoritesThunk(card));
       return;
     }
-
-    setAddFavorite(addFavorite.filter((item) => item.name !== card.name));
-  };
-
-  const isFavorite = (card) => {
-    const favoriteFilter = addFavorite.filter(
-      (item) => item.name === card.name
-    );
-
-    if (favoriteFilter.length === 0) {
-      return false;
-    }
-
-    return true;
+    dispatch(removeToFavoritesThunk(card));
   };
 
   const getImage = (char) => {
@@ -100,7 +96,7 @@ const Pokemon = ({ setAddFavorite, addFavorite }) => {
             <CardItemContent>
               {char.name}
               <IconButton onClick={PokemonGenerator(char)}>
-                <IconFavorite active={isFavorite(char).toString()} />
+                <IconFavorite active={isFavorite(char, favorites).toString()} />
               </IconButton>
             </CardItemContent>
           </CardItem>
