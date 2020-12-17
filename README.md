@@ -1,4 +1,4 @@
-# Entrega Coleções
+# Coleções
 
 O objetivo desse projeto é criar uma aplicação na qual disponibilizamos duas listagens de personagens para o usuário. A primeira lista será do Rick and Morty e a segunda de Pokemons. Cada lista deve-se apresentar em sua respectiva página, com um campo de busca e botões para a paginação.
 
